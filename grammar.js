@@ -103,10 +103,14 @@ module.exports = grammar({
             ),
 
         // Puppet type reference:
-        //   String, Stdlib::Host, Optional[String], Variant[String, Integer]
+        //   String, Optional[String], Variant[String, Integer]
         _parameter_type: ($) => seq($._parameter_type_name, optional($._parameter_type_args)),
 
         _parameter_type_name: (_) => token(/[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)*/),
+        // _parameter_type_name: (_) => token(/[A-Z][A-Za-z0-9_]*/),
+
+        //   Stdlib::Host, Stdlib::IP::Address, etc
+        // _parameter_subtype_name: (_) => token(/(::[A-Z][A-Za-z0-9_]*)*/),
 
         // Balanced [...] block. Contents are not introspected.
         _parameter_type_args: ($) => seq('[', repeat(choice($._parameter_type_arg_text, $._parameter_type_args)), ']'),
@@ -119,11 +123,14 @@ module.exports = grammar({
 
         // Non-printing: `<% ... %>` / `<%- ... -%>` / mixed trim.
         // Close markers come from the external scanner so `%>` inside Puppet
-        // strings/comments does not end the directive prematurely.
-        directive: ($) => seq(choice('<%', '<%-'), optional($.code), choice($._close_directive, $._trim_close_directive)),
+        // strings/comments does not end the directive prematurely. They are
+        // aliased back to their literal forms so query consumers can match
+        // them as anonymous `"%>"` / `"-%>"` tokens (matching the convention
+        // used by tree-sitter-embedded-template).
+        directive: ($) => seq(choice('<%', '<%-'), optional($.code), choice(alias($._close_directive, '%>'), alias($._trim_close_directive, '-%>'))),
 
         // Printing: `<%= ... %>` / `<%-= ... -%>` / mixed trim.
-        output_directive: ($) => seq(choice('<%=', '<%-='), optional($.code), choice($._close_directive, $._trim_close_directive)),
+        output_directive: ($) => seq(choice('<%=', '<%-='), optional($.code), choice(alias($._close_directive, '%>'), alias($._trim_close_directive, '-%>'))),
 
         // Tag body: a single named node wrapping all items. `_code_text` is
         // produced by the external scanner (string/comment-aware). `_ws` is

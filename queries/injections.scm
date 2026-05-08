@@ -10,6 +10,10 @@
   (#set! injection.language "puppet")
   (#set! injection.combined))
 
+; ((parameter_type) @injection.content
+;   (#set! injection.language "puppet")
+;   (#set! injection.combined))
+
 ((parameter_default) @injection.content
   (#set! injection.language "puppet")
   (#set! injection.combined))

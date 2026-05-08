@@ -21,7 +21,8 @@ The external scanner must be included in the `files` list
 ```lua
 vim.api.nvim_create_autocmd('User', { pattern = 'TSUpdate',
     callback = function()
-        require('nvim-treesitter.parsers').epuppet = {
+        local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+        parser_config.epuppet = {
             install_info = {
                 url = 'https://github.com/demaks92/tree-sitter-epuppet',
                 -- commit hash for revision to check out; HEAD if missing
@@ -29,8 +30,6 @@ vim.api.nvim_create_autocmd('User', { pattern = 'TSUpdate',
                 -- optional entries:
                 -- only needed if different from default branch
                 branch = 'main',
-                -- only needed if the parser is in subdirectory of a "monorepo"
-                location = 'parser',
                 -- only needed if repo does not contain pre-generated `src/parser.c`
                 generate = false,
                 -- only needed if repo does not contain `src/grammar.json` either

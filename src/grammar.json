@@ -423,12 +423,22 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_close_directive"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_close_directive"
+              },
+              "named": false,
+              "value": "%>"
             },
             {
-              "type": "SYMBOL",
-              "name": "_trim_close_directive"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_trim_close_directive"
+              },
+              "named": false,
+              "value": "-%>"
             }
           ]
         }
@@ -466,12 +476,22 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_close_directive"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_close_directive"
+              },
+              "named": false,
+              "value": "%>"
             },
             {
-              "type": "SYMBOL",
-              "name": "_trim_close_directive"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_trim_close_directive"
+              },
+              "named": false,
+              "value": "-%>"
             }
           ]
         }

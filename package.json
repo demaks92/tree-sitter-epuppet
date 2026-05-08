@@ -30,6 +30,9 @@
     "test": "tree-sitter test",
     "parse": "tree-sitter parse"
   },
+  "dependencies": {
+    "node-addon-api": "^8.0.0"
+  },
   "devDependencies": {
     "tree-sitter-cli": "^0.25.0"
   },
