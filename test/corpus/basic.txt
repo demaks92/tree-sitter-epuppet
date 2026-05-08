@@ -1,0 +1,16 @@
+==================
+plain text only
+==================
+hello world
+no tags here
+---
+
+(source_file
+  (content))
+
+==================
+empty file
+==================
+---
+
+(source_file)

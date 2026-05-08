@@ -1,0 +1,91 @@
+==================
+parameter tag with single param
+==================
+<%- | $x | -%>
+hello <%= $x %>
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      name: (variable)))
+  (content)
+  (expression_tag
+    code: (code)))
+
+==================
+parameter tag with default value
+==================
+<%- | $x, $y = 'default' | -%>
+body
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      name: (variable))
+    (parameter
+      name: (variable)
+      default: (code)))
+  (content))
+
+==================
+parameter tag with type annotations
+==================
+<%- |
+  String       $name,
+  Integer      $count,
+  Array[String] $items,
+| -%>
+done
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      type: (type)
+      name: (variable))
+    (parameter
+      type: (type)
+      name: (variable))
+    (parameter
+      type: (type)
+      name: (variable)))
+  (content))
+
+==================
+parameter tag without trim
+==================
+<% | $x | %>
+plain
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      name: (variable)))
+  (content))
+
+==================
+parameter tag with namespaced and bracketed types
+==================
+<%- |
+  Stdlib::Host             $hostname,
+  Optional[String]         $user,
+  String                   $pass,
+| -%>
+body
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      type: (type)
+      name: (variable))
+    (parameter
+      type: (type)
+      name: (variable))
+    (parameter
+      type: (type)
+      name: (variable)))
+  (content))

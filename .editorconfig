@@ -1,0 +1,53 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+tab_width = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 200
+
+[*.zsh]
+# --language-dialect
+shell_variant      = zsh
+indent_size        = 4
+indent_style       = space
+binary_next_line   = false
+switch_case_indent = true
+space_redirects    = true
+keep_padding       = true
+function_next_line = false
+minify             = false
+resharper_bad_indent_highlighting = suggestion
+
+[*.sh,*.bash]
+# --language-dialect
+shell_variant      = bash
+indent_size        = 2
+indent_style       = space
+binary_next_line   = false
+switch_case_indent = true
+space_redirects    = true
+keep_padding       = true
+function_next_line = false
+minify             = false
+resharper_bad_indent_highlighting = suggestion
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.go]
+indent_style = tab
+
+[Makefile]
+indent_style = tab
+
+# Ignore the entire "third_party" directory when calling shfmt on directories,
+# such as "shfmt -l -w .". When formatting files directly,
+# like "shfmt -w third_party/foo.sh" or "shfmt --filename=third_party/foo.sh",
+# the ignore logic is applied only when the --apply-ignore flag is given.
+[third_party/**]
+ignore = true

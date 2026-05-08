@@ -1,0 +1,37 @@
+{
+  "grammars": [
+    {
+      "name": "epuppet",
+      "camelcase": "EPuppet",
+      "scope": "source.epuppet",
+      "path": ".",
+      "file-types": ["epp"],
+      "injection-regex": "^(epuppet|epp)$",
+      "highlights": "queries/highlights.scm",
+      "injections": "queries/injections.scm",
+      "locals": "queries/locals.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "EPP (Embedded Puppet) grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "demaks92"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/demaks92/tree-sitter-epuppet"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": false,
+    "node": true,
+    "python": false,
+    "rust": true,
+    "swift": false,
+    "zig": false
+  }
+}

@@ -1,0 +1,307 @@
+[
+  {
+    "type": "code",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "class_variable",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comment_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "content",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "code",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "output_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "code",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter",
+    "named": true,
+    "fields": {
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_default",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameter_name",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameter_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "parameter_default",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "parameter_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter_type",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "template",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_directive",
+          "named": true
+        },
+        {
+          "type": "content",
+          "named": true
+        },
+        {
+          "type": "directive",
+          "named": true
+        },
+        {
+          "type": "output_directive",
+          "named": true
+        },
+        {
+          "type": "parameter_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "%>",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-%>",
+    "named": false
+  },
+  {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<%",
+    "named": false
+  },
+  {
+    "type": "<% |",
+    "named": false
+  },
+  {
+    "type": "<%#",
+    "named": false
+  },
+  {
+    "type": "<%%",
+    "named": false
+  },
+  {
+    "type": "<%-",
+    "named": false
+  },
+  {
+    "type": "<%- |",
+    "named": false
+  },
+  {
+    "type": "<%-#",
+    "named": false
+  },
+  {
+    "type": "<%-=",
+    "named": false
+  },
+  {
+    "type": "<%-|",
+    "named": false
+  },
+  {
+    "type": "<%=",
+    "named": false
+  },
+  {
+    "type": "<%|",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "class_variable",
+    "named": true
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "function_call",
+    "named": true
+  },
+  {
+    "type": "parameter_name",
+    "named": true
+  },
+  {
+    "type": "variable",
+    "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "| %>",
+    "named": false
+  },
+  {
+    "type": "| -%>",
+    "named": false
+  },
+  {
+    "type": "|%>",
+    "named": false
+  },
+  {
+    "type": "|-%>",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
+  }
+]

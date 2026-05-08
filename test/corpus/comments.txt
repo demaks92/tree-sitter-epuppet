@@ -1,0 +1,44 @@
+==================
+single line comment
+==================
+<%# this is a comment %>
+---
+
+(source_file
+  (comment_tag
+    comment: (comment)))
+
+==================
+multiline comment
+==================
+<%#
+  this comment
+  spans lines
+%>
+body
+---
+
+(source_file
+  (comment_tag
+    comment: (comment))
+  (content))
+
+==================
+comment with trim
+==================
+<%#- silent -%>
+---
+
+(source_file
+  (comment_tag
+    comment: (comment)))
+
+==================
+empty comment
+==================
+<%# %>
+---
+
+(source_file
+  (comment_tag
+    comment: (comment)))

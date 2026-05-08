@@ -1,0 +1,67 @@
+==================
+expression tag inline
+==================
+prefix <%= $value %> suffix
+---
+
+(source_file
+  (content)
+  (expression_tag
+    code: (code))
+  (content))
+
+==================
+code block tag
+==================
+<% if $cond { %>
+yes
+<% } %>
+---
+
+(source_file
+  (code_tag
+    code: (code))
+  (content)
+  (code_tag
+    code: (code)))
+
+==================
+code block with trim markers
+==================
+before
+<%- $arr.each |$x| { -%>
+  item: <%= $x %>
+<%- } -%>
+after
+---
+
+(source_file
+  (content)
+  (code_tag
+    code: (code))
+  (content)
+  (expression_tag
+    code: (code))
+  (content)
+  (code_tag
+    code: (code))
+  (content))
+
+==================
+empty code tag
+==================
+<%  %>
+---
+
+(source_file
+  (code_tag))
+
+==================
+expression with lambda using pipes
+==================
+<%= $list.map |$x| { $x * 2 } %>
+---
+
+(source_file
+  (expression_tag
+    code: (code)))

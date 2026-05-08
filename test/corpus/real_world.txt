@@ -1,0 +1,54 @@
+==================
+real world: env-helpers style
+==================
+<%- |
+  String       $api_key,
+  Stdlib::Host $hostname,
+| -%>
+
+#!/usr/bin/env bash
+export API_KEY HOST
+
+API_KEY=<%= $api_key %>
+HOST=<%= $hostname %>
+---
+
+(source_file
+  (parameter_tag
+    (parameter
+      type: (type)
+      name: (variable))
+    (parameter
+      type: (type)
+      name: (variable)))
+  (content)
+  (expression_tag
+    code: (code))
+  (content)
+  (expression_tag
+    code: (code)))
+
+==================
+real world: each loop with body
+==================
+server {
+<%- $listen_addresses.each |$addr| { -%>
+    listen <%= $addr %>:<%= $port %>;
+<%- } -%>
+}
+---
+
+(source_file
+  (content)
+  (code_tag
+    code: (code))
+  (content)
+  (expression_tag
+    code: (code))
+  (content)
+  (expression_tag
+    code: (code))
+  (content)
+  (code_tag
+    code: (code))
+  (content))
