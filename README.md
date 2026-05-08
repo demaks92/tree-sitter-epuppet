@@ -2,96 +2,124 @@
 
 A [tree-sitter](https://tree-sitter.github.io) grammar for **EPP** (Embedded Puppet) templates.
 
-EPP is Puppet's templating language that interleaves arbitrary text with Puppet code blocks (`<% ... %>`, `<%= ... %>`, `<%# ... %>`). This grammar provides a thin AST that captures the EPP delimiters and exposes the Puppet code inside tags as opaque `code` nodes, designed for **language injection** into [tree-sitter-puppet](https://github.com/amaanq/tree-sitter-puppet).
+EPP is Puppet's templating language that interleaves arbitrary text with Puppet code blocks
+(`<% ... %>`, `<%= ... %>`, `<%# ... %>`, and the parameter directive `<%- | ... | -%>`)
 
-## Features
-
-- Full EPP tag coverage: parameter (`<%- | ... | -%>`), expression (`<%= ... %>`), code block (`<% ... %>`), comment (`<%# ... %>`)
-- All trim-marker variants (`<%-`, `-%>`)
-- Escape sequences (`<%%`, `%%>`)
-- Puppet syntax injection inside every tag (combined across the file)
-- No external scanner — pure regex tokens, easy to build everywhere
+This grammar produces a thin AST that captures EPP delimiters, structures the parameter list,
+and exposes Puppet code inside non-parameter tags as opaque `code` nodes designed for
+**language injection** into [tree-sitter-puppet](https://github.com/amaanq/tree-sitter-puppet).
 
 ## Installation
 
-### Neovim (nvim-treesitter)
+Until upstreamed, install as a custom parser
+The external scanner must be included in the `files` list
 
-Until upstreamed, install as a custom parser:
+### Automatic NeoVim Installation (via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter))
+
+1. Add the following snippet in a User TSUpdate autocommand:
 
 ```lua
-local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-parser_config.epuppet = {
-  install_info = {
-    url = "https://github.com/demaks92/tree-sitter-epuppet",
-    files = { "src/parser.c" },
-    branch = "main",
-  },
-  filetype = "epuppet",
-}
+vim.api.nvim_create_autocmd('User', { pattern = 'TSUpdate',
+    callback = function()
+        require('nvim-treesitter.parsers').epuppet = {
+            install_info = {
+                url = 'https://github.com/demaks92/tree-sitter-epuppet',
+                -- commit hash for revision to check out; HEAD if missing
+                files = { "src/parser.c", "src/scanner.c" },
+                -- optional entries:
+                -- only needed if different from default branch
+                branch = 'main',
+                -- only needed if the parser is in subdirectory of a "monorepo"
+                location = 'parser',
+                -- only needed if repo does not contain pre-generated `src/parser.c`
+                generate = false,
+                -- only needed if repo does not contain `src/grammar.json` either
+                generate_from_json = false,
+                -- also install queries from given directory
+                queries = 'queries',
+            },
+        }
+    end}
+)
+```
 
+2. Register the parser via vim.treesitter:
+
+```lua
+vim.treesitter.language.register('epuppet', { 'epp' })
+```
+
+3. If Neovim does not detect your language's filetype by default, you can use Neovim's vim.filetype.add() to add a custom detection rule:
+
+```lua
 vim.filetype.add({
-  extension = { epp = "epuppet" },
+  extension = { epp = 'epuppet' },
 })
 ```
 
-Then:
+4. Start nvim and `:TSInstall epuppet`:
 
 ```vim
 :TSInstall epuppet
 :TSInstall puppet
 ```
 
-Copy queries into your runtime path (or symlink them):
+### Manual NeoVim Installation
 
-```bash
+1. Install the [tree-sitter-cli](https://github.com/tree-sitter/tree-sitter):
+
+```shell
+# Via Cargo
+cargo install tree-sitter-cli
+
+# Via NPM
+npm install tree-sitter-cli
+```
+
+2. Clone github repository:
+
+```shell
+git clone https://github.com/demaks92/tree-sitter-epuppet.git
+cd tree-sitter-epuppet
+```
+
+3. Copy queries into your runtime path (or symlink them):
+
+```shell
 mkdir -p ~/.config/nvim/queries/epuppet
 cp queries/*.scm ~/.config/nvim/queries/epuppet/
 ```
 
-### From source
+4. Build and copy parser.so:
 
-```bash
+```shell
+tree-sitter generate
+cc -o ~/.local/share/nvim/site/parser/epuppet.so -shared -Os -fPIC -I src src/parser.c
+```
+
+## Development
+
+1. Install the dependencies:
+
+```shell
 npm install
+```
+
+2. Build:
+
+```shell
 npx tree-sitter generate
+npx tree-sitter build
+```
+
+3. Run tests:
+
+```shell
 npx tree-sitter test
+npx tree-sitter parse path/to/file.epp
+npx tree-sitter highlight path/to/file.epp
 ```
 
-## Grammar
-
-The parser produces this top-level structure:
-
-```text
-source_file
-├── parameter_tag?      # only at the start of the file
-└── (comment_tag | expression_tag | code_tag | content)*
-```
-
-Inside every tag, Puppet code is captured as a `code` node (or `comment` for comment tags). The provided `queries/injections.scm` injects `tree-sitter-puppet` into all `code` nodes with `injection.combined`, so variables declared in one tag are visible to later tags during highlighting.
-
-## Highlighting outer language
-
-The `content` node (text outside tags) is intentionally left without an injection so users can layer their own — for example, to highlight EPP-templated bash, nginx, or YAML files. Add to `~/.config/nvim/queries/epuppet/injections.scm`:
-
-```scm
-((content) @injection.content
-  (#set! injection.language "bash")
-  (#set! injection.combined))
-```
-
-## Limitations
-
-- The parameter tag is only recognised at the **start** of the source file (per the EPP spec).
-- Whitespace-trim semantics (`-` markers) are exposed as token text, not as separate nodes — consumers can inspect the literal `open`/`close` fields.
-- Escape sequences (`<%%`, `%%>`) are absorbed into surrounding `content`/`code` text without dedicated AST nodes.
-
-## Testing
-
-```bash
-npx tree-sitter test                          # corpus tests
-npx tree-sitter parse 'path/to/file.epp'      # parse a single file
-npx tree-sitter highlight path/to/file.epp    # ANSI-coloured output
-```
-
-## License
-
-[MIT](LICENSE)
+The corpus (`test/corpus/*.txt`) covers basic tags, comments, escapes,
+parameter directives, real-world fixtures, and string/comment-aware scanner
+edge cases.

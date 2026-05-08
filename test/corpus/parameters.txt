@@ -5,13 +5,15 @@ parameter tag with single param
 hello <%= $x %>
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))))
   (content)
-  (expression_tag
-    code: (code)))
+  (output_directive
+    (code
+      (variable))))
 
 ==================
 parameter tag with default value
@@ -20,13 +22,14 @@ parameter tag with default value
 body
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable))
-    (parameter
-      name: (variable)
-      default: (code)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))
+      (parameter
+        name: (parameter_name)
+        default: (parameter_default))))
   (content))
 
 ==================
@@ -40,17 +43,18 @@ parameter tag with type annotations
 done
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))))
   (content))
 
 ==================
@@ -60,10 +64,11 @@ parameter tag without trim
 plain
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))))
   (content))
 
 ==================
@@ -77,15 +82,16 @@ parameter tag with namespaced and bracketed types
 body
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))))
   (content))

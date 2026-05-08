@@ -5,7 +5,7 @@ hello world
 no tags here
 ---
 
-(source_file
+(template
   (content))
 
 ==================
@@ -13,4 +13,4 @@ empty file
 ==================
 ---
 
-(source_file)
+(template)

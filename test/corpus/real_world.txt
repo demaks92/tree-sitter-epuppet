@@ -13,20 +13,23 @@ API_KEY=<%= $api_key %>
 HOST=<%= $hostname %>
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type)
+        name: (parameter_name))))
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content)
-  (expression_tag
-    code: (code)))
+  (output_directive
+    (code
+      (variable))))
 
 ==================
 real world: each loop with body
@@ -38,17 +41,21 @@ server {
 }
 ---
 
-(source_file
+(template
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code
+      (variable)
+      (variable)))
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code))
   (content))

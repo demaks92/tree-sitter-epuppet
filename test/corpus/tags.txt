@@ -4,10 +4,11 @@ expression tag inline
 prefix <%= $value %> suffix
 ---
 
-(source_file
+(template
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content))
 
 ==================
@@ -18,12 +19,13 @@ yes
 <% } %>
 ---
 
-(source_file
-  (code_tag
-    code: (code))
+(template
+  (directive
+    (code
+      (variable)))
   (content)
-  (code_tag
-    code: (code)))
+  (directive
+    (code)))
 
 ==================
 code block with trim markers
@@ -35,16 +37,19 @@ before
 after
 ---
 
-(source_file
+(template
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code
+      (variable)
+      (variable)))
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code))
   (content))
 
 ==================
@@ -53,8 +58,9 @@ empty code tag
 <%  %>
 ---
 
-(source_file
-  (code_tag))
+(template
+  (directive
+    (code)))
 
 ==================
 expression with lambda using pipes
@@ -62,6 +68,9 @@ expression with lambda using pipes
 <%= $list.map |$x| { $x * 2 } %>
 ---
 
-(source_file
-  (expression_tag
-    code: (code)))
+(template
+  (output_directive
+    (code
+      (variable)
+      (variable)
+      (variable))))

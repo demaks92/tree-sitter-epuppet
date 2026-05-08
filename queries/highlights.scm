@@ -9,19 +9,13 @@
   "<%-#"
   "%>"
   "-%>"
-] @keyword.directive
+] @tag.delimiter
 
-; Pipes around the parameter directive
-[
-  "<% |"
-  "<%- |"
-  "<%|"
-  "<%-|"
-  "| %>"
-  "| -%>"
-  "|%>"
-  "|-%>"
-] @punctuation.special
+; Pipes around the parameter list are emitted by the external scanner as a
+; hidden token (`_parameter_pipe`) and therefore cannot be matched directly.
+; Highlight responsibility falls back to the surrounding `parameter_directive`
+; scope (delimiter colour is already applied above via `<%`/`<%-`/`%>`/`-%>`).
+
 
 ; Structured parameters: highlight types and names ourselves so bare
 ; identifiers like `String` get coloured even when the puppet injection
@@ -37,7 +31,7 @@
     "Regexp" "Variant" "Optional" "Data" "Undef" "Default" "Any"
     "Pattern" "Enum" "Tuple" "Struct" "NotUndef" "Sensitive"
     "Type" "Callable" "Iterator" "Iterable" "Collection" "Catalogentry"
-    "Resource" "Class" "Scalar" "Numeric" "Init" "Timestamp" "Timespan"
+    "Resource" "Class" "Scalar" "Init" "Timestamp" "Timespan"
     "Binary" "URI"))
 
 ; `=` between name and default value

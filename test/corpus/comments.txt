@@ -4,9 +4,9 @@ single line comment
 <%# this is a comment %>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))
 
 ==================
 multiline comment
@@ -18,9 +18,9 @@ multiline comment
 body
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment))
+(template
+  (comment_directive
+    (comment))
   (content))
 
 ==================
@@ -29,9 +29,9 @@ comment with trim
 <%#- silent -%>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))
 
 ==================
 empty comment
@@ -39,6 +39,6 @@ empty comment
 <%# %>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))

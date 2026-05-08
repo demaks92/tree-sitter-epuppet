@@ -98,7 +98,7 @@
       },
       "type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "parameter_type",
@@ -119,7 +119,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "parameter_list",
@@ -209,10 +209,6 @@
     "named": false
   },
   {
-    "type": "<% |",
-    "named": false
-  },
-  {
     "type": "<%#",
     "named": false
   },
@@ -225,10 +221,6 @@
     "named": false
   },
   {
-    "type": "<%- |",
-    "named": false
-  },
-  {
     "type": "<%-#",
     "named": false
   },
@@ -237,15 +229,7 @@
     "named": false
   },
   {
-    "type": "<%-|",
-    "named": false
-  },
-  {
     "type": "<%=",
-    "named": false
-  },
-  {
-    "type": "<%|",
     "named": false
   },
   {
@@ -282,22 +266,6 @@
   },
   {
     "type": "{",
-    "named": false
-  },
-  {
-    "type": "| %>",
-    "named": false
-  },
-  {
-    "type": "| -%>",
-    "named": false
-  },
-  {
-    "type": "|%>",
-    "named": false
-  },
-  {
-    "type": "|-%>",
     "named": false
   },
   {
