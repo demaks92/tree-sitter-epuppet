@@ -72,10 +72,10 @@ vim.filetype.add({
 cargo install tree-sitter-cli
 
 # Via NPM
-npm install tree-sitter-cli
+npm install -g tree-sitter-cli
 ```
 
-2. Clone github repository:
+2. Clone GitHub repository:
 
 ```shell
 git clone https://github.com/demaks92/tree-sitter-epuppet.git
@@ -93,7 +93,7 @@ cp queries/*.scm ~/.config/nvim/queries/epuppet/
 
 ```shell
 tree-sitter generate
-cc -o ~/.local/share/nvim/site/parser/epuppet.so -shared -Os -fPIC -I src src/parser.c
+cc -o ~/.local/share/nvim/site/parser/epuppet.so -shared -Os -fPIC -I src src/parser.c src/scanner.c
 ```
 
 ## Development

@@ -63,6 +63,7 @@ static inline bool is_operator_start(int32_t character) {
         case '+':
         case '*':
         case '/':
+        case '%':
         case '<':
         case '>':
         case '=':
@@ -124,7 +125,10 @@ static bool scan_code_or_close(TSLexer *lexer, const bool *valid_symbols) {
                 }
 
                 if (!valid_symbols[CLOSE_DIRECTIVE]) {
-                    return false;
+                    advance(lexer);
+                    saw_code_text = true;
+                    mark_end(lexer);
+                    continue;
                 }
 
                 advance(lexer);
@@ -160,7 +164,10 @@ static bool scan_code_or_close(TSLexer *lexer, const bool *valid_symbols) {
                     }
 
                     if (!valid_symbols[TRIM_CLOSE_DIRECTIVE]) {
-                        return false;
+                        advance(lexer);
+                        saw_code_text = true;
+                        mark_end(lexer);
+                        continue;
                     }
 
                     advance(lexer);

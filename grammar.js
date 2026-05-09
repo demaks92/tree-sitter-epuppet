@@ -241,10 +241,11 @@ module.exports = grammar({
         _default_code: ($) => repeat1(choice($._default_atom, $._balanced_parens, $._balanced_brackets, $._balanced_braces)),
 
         // At the top level of a default we cannot consume `,` (next param) or
-        // `|` (closing pipe) or `-` (which might begin `-%>` boundary issues
-        // when stuck against the closing pipe). `-` is permitted inside
-        // balanced groups via `_balanced_text`.
-        _default_atom: (_) => token(/([^,|()\[\]{}"'\-]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')+/),
+        // `|` (closing pipe). `-` is permitted because unary and binary
+        // minus are common in Puppet default expressions (e.g. `-1`, `1 - 2`).
+        // `-%>` boundary concerns are handled by the external scanner in the
+        // code-text state, not by the parameter default lexer.
+        _default_atom: (_) => token(/([^,|()\[\]{}"']|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')+/),
 
         _balanced_parens: ($) => seq('(', repeat(choice($._balanced_text, $._balanced_parens, $._balanced_brackets, $._balanced_braces)), ')'),
 
