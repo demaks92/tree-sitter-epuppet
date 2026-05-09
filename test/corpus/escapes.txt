@@ -1,5 +1,5 @@
 ==================
-escaped open delimiter in content
+Escaped open delimiter in content
 ==================
 literal <%% stays as text
 ---
@@ -7,18 +7,22 @@ literal <%% stays as text
 (template
   (content))
 
+
 ==================
-escaped close delimiter inside code
+Escaped close delimiter inside code
 ==================
 <% before %%> after %>
 ---
 
 (template
   (directive
-    (code)))
+    (code
+      (identifier)
+      (identifier))))
+
 
 ==================
-both escapes mixed in content
+Both escapes mixed in content
 ==================
 prefix <%% middle %%> suffix
 ---

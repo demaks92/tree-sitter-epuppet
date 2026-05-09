@@ -1,15 +1,18 @@
 ==================
-output directive with percent close inside single string
+Output directive with percent close inside single string
 ==================
 <%= notice('hello %> world') %>
 ---
 
 (template
   (output_directive
-    (code)))
+    (code
+      (identifier)
+      (string))))
+
 
 ==================
-directive with percent close inside line comment
+Directive with percent close inside line comment
 ==================
 <% # comment with %> inside
 $x %>
@@ -18,10 +21,12 @@ $x %>
 (template
   (directive
     (code
+      (comment)
       (variable))))
 
+
 ==================
-empty parameter directive
+Empty parameter directive
 ==================
 <%- || -%>
 ---
@@ -29,12 +34,14 @@ empty parameter directive
 (template
   (parameter_directive))
 
+
 ==================
-output directive with percent close inside interpolated double string
+Output directive with percent close inside interpolated double string
 ==================
 <%= "value=${x}, %>" %>
 ---
 
 (template
   (output_directive
-    (code)))
+    (code
+      (string))))

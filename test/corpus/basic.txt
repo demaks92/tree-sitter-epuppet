@@ -1,5 +1,5 @@
 ==================
-plain text only
+Plain text only
 ==================
 hello world
 no tags here
@@ -9,7 +9,7 @@ no tags here
   (content))
 
 ==================
-empty file
+Empty file
 ==================
 ---
 

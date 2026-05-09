@@ -1,5 +1,21 @@
 [
   {
+    "type": "array_type_arguments",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "code",
     "named": true,
     "fields": {},
@@ -12,7 +28,27 @@
           "named": true
         },
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "operator",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         },
         {
@@ -55,6 +91,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "hash_type_arguments",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -146,6 +208,88 @@
   {
     "type": "parameter_type",
     "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "array_type_arguments",
+            "named": true
+          },
+          {
+            "type": "hash_type_arguments",
+            "named": true
+          },
+          {
+            "type": "type_arguments",
+            "named": true
+          }
+        ]
+      },
+      "class": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "class_name",
+            "named": true
+          }
+        ]
+      },
+      "delimiter": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_type_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "subclass": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "subclass_name",
+            "named": true
+          }
+        ]
+      },
+      "subtype": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "subtype_name",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "array_type",
+            "named": true
+          },
+          {
+            "type": "hash_type",
+            "named": true
+          },
+          {
+            "type": "type_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "parameter_type_delimiter",
+    "named": true,
     "fields": {}
   },
   {
@@ -181,6 +325,118 @@
     }
   },
   {
+    "type": "type_argument",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "parameter_type",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "type_array",
+          "named": true
+        },
+        {
+          "type": "type_hash",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_arguments",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "type_array",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "type_hash",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "type_hash_entry",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_hash_entry",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "parameter_type",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_argument",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "%>",
     "named": false
   },
@@ -198,6 +454,10 @@
   },
   {
     "type": "-%>",
+    "named": false
+  },
+  {
+    "type": "::",
     "named": false
   },
   {
@@ -237,12 +497,24 @@
     "named": false
   },
   {
+    "type": "=>",
+    "named": false
+  },
+  {
     "type": "[",
     "named": false
   },
   {
     "type": "]",
     "named": false
+  },
+  {
+    "type": "array_type",
+    "named": true
+  },
+  {
+    "type": "class_name",
+    "named": true
   },
   {
     "type": "class_variable",
@@ -257,7 +529,39 @@
     "named": true
   },
   {
+    "type": "hash_type",
+    "named": true
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
+    "type": "number",
+    "named": true
+  },
+  {
+    "type": "operator",
+    "named": true
+  },
+  {
     "type": "parameter_name",
+    "named": true
+  },
+  {
+    "type": "string",
+    "named": true
+  },
+  {
+    "type": "subclass_name",
+    "named": true
+  },
+  {
+    "type": "subtype_name",
+    "named": true
+  },
+  {
+    "type": "type_name",
     "named": true
   },
   {

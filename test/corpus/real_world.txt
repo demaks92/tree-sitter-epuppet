@@ -1,5 +1,5 @@
 ==================
-real world: env-helpers style
+Real world: env-helpers style
 ==================
 <%- |
   String       $api_key,
@@ -17,10 +17,14 @@ HOST=<%= $hostname %>
   (parameter_directive
     (parameter_list
       (parameter
-        type: (parameter_type)
+        type: (parameter_type
+          type: (type_name))
         name: (parameter_name))
       (parameter
-        type: (parameter_type)
+        type: (parameter_type
+          class: (class_name)
+          delimiter: (parameter_type_delimiter)
+          subtype: (subtype_name))
         name: (parameter_name))))
   (content)
   (output_directive
@@ -32,7 +36,7 @@ HOST=<%= $hostname %>
       (variable))))
 
 ==================
-real world: each loop with body
+Real world: each loop with body
 ==================
 server {
 <%- $listen_addresses.each |$addr| { -%>
@@ -46,7 +50,10 @@ server {
   (directive
     (code
       (variable)
-      (variable)))
+      (identifier)
+      (operator)
+      (variable)
+      (operator)))
   (content)
   (output_directive
     (code

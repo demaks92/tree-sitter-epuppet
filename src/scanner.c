@@ -50,10 +50,40 @@ static inline bool is_whitespace(int32_t character) {
     return character == ' ' || character == '\t' || character == '\r' || character == '\n';
 }
 
-static void scan_single_quoted_string(TSLexer *lexer);
-static void scan_double_quoted_string(TSLexer *lexer);
-static void scan_line_comment(TSLexer *lexer);
-static void scan_interpolation(TSLexer *lexer);
+static inline bool is_digit(int32_t character) {
+    return character >= '0' && character <= '9';
+}
+
+static inline bool is_identifier_start(int32_t character) {
+    return (character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z') || character == '_';
+}
+
+static inline bool is_operator_start(int32_t character) {
+    switch (character) {
+        case '+':
+        case '*':
+        case '/':
+        case '<':
+        case '>':
+        case '=':
+        case '!':
+        case '~':
+        case '|':
+        case '&':
+            return true;
+        default:
+            return false;
+    }
+}
+
+static inline bool should_yield_to_named_code_token(int32_t character) {
+    return character == '\'' ||
+        character == '"' ||
+        character == '#' ||
+        is_digit(character) ||
+        is_identifier_start(character) ||
+        is_operator_start(character);
+}
 
 static bool emit_token(TSLexer *lexer, enum TokenType token_type) {
     lexer->result_symbol = token_type;
@@ -67,129 +97,6 @@ static bool emit_code_text(TSLexer *lexer, const bool *valid_symbols) {
 
     lexer->result_symbol = CODE_TEXT;
     return true;
-}
-
-static void consume_escape(TSLexer *lexer) {
-    advance(lexer);
-    mark_end(lexer);
-
-    if (!is_eof(lexer)) {
-        advance(lexer);
-        mark_end(lexer);
-    }
-}
-
-static void scan_single_quoted_string(TSLexer *lexer) {
-    advance(lexer);
-    mark_end(lexer);
-
-    while (!is_eof(lexer)) {
-        int32_t character = lexer->lookahead;
-
-        if (character == '\\') {
-            consume_escape(lexer);
-            continue;
-        }
-
-        advance(lexer);
-        mark_end(lexer);
-
-        if (character == '\'') {
-            break;
-        }
-    }
-}
-
-static void scan_line_comment(TSLexer *lexer) {
-    advance(lexer);
-    mark_end(lexer);
-
-    while (!is_eof(lexer)) {
-        int32_t character = lexer->lookahead;
-
-        advance(lexer);
-        mark_end(lexer);
-
-        if (character == '\n') {
-            break;
-        }
-    }
-}
-
-static void scan_interpolation(TSLexer *lexer) {
-    unsigned brace_depth = 1;
-
-    while (!is_eof(lexer) && brace_depth > 0) {
-        int32_t character = lexer->lookahead;
-
-        if (character == '\'') {
-            scan_single_quoted_string(lexer);
-            continue;
-        }
-
-        if (character == '"') {
-            scan_double_quoted_string(lexer);
-            continue;
-        }
-
-        if (character == '#') {
-            scan_line_comment(lexer);
-            continue;
-        }
-
-        if (character == '{') {
-            advance(lexer);
-            mark_end(lexer);
-            brace_depth++;
-            continue;
-        }
-
-        if (character == '}') {
-            advance(lexer);
-            mark_end(lexer);
-            brace_depth--;
-            continue;
-        }
-
-        advance(lexer);
-        mark_end(lexer);
-    }
-}
-
-static void scan_double_quoted_string(TSLexer *lexer) {
-    advance(lexer);
-    mark_end(lexer);
-
-    while (!is_eof(lexer)) {
-        int32_t character = lexer->lookahead;
-
-        if (character == '\\') {
-            consume_escape(lexer);
-            continue;
-        }
-
-        if (character == '"') {
-            advance(lexer);
-            mark_end(lexer);
-            break;
-        }
-
-        if (character == '$') {
-            advance(lexer);
-            mark_end(lexer);
-
-            if (lexer->lookahead == '{') {
-                advance(lexer);
-                mark_end(lexer);
-                scan_interpolation(lexer);
-            }
-
-            continue;
-        }
-
-        advance(lexer);
-        mark_end(lexer);
-    }
 }
 
 static bool scan_code_or_close(TSLexer *lexer, const bool *valid_symbols) {
@@ -271,22 +178,12 @@ static bool scan_code_or_close(TSLexer *lexer, const bool *valid_symbols) {
             continue;
         }
 
-        if (character == '\'') {
-            scan_single_quoted_string(lexer);
-            saw_code_text = true;
-            continue;
-        }
+        if (should_yield_to_named_code_token(character)) {
+            if (saw_code_text) {
+                return emit_code_text(lexer, valid_symbols);
+            }
 
-        if (character == '"') {
-            scan_double_quoted_string(lexer);
-            saw_code_text = true;
-            continue;
-        }
-
-        if (character == '#') {
-            scan_line_comment(lexer);
-            saw_code_text = true;
-            continue;
+            return false;
         }
 
         advance(lexer);

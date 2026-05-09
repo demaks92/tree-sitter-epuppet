@@ -1,5 +1,5 @@
 ==================
-expression tag inline
+Expression tag inline
 ==================
 prefix <%= $value %> suffix
 ---
@@ -11,8 +11,9 @@ prefix <%= $value %> suffix
       (variable)))
   (content))
 
+
 ==================
-code block tag
+Code block tag
 ==================
 <% if $cond { %>
 yes
@@ -22,13 +23,15 @@ yes
 (template
   (directive
     (code
+      (identifier)
       (variable)))
   (content)
   (directive
     (code)))
 
+
 ==================
-code block with trim markers
+Code block with trim markers
 ==================
 before
 <%- $arr.each |$x| { -%>
@@ -42,7 +45,10 @@ after
   (directive
     (code
       (variable)
-      (variable)))
+      (identifier)
+      (operator)
+      (variable)
+      (operator)))
   (content)
   (output_directive
     (code
@@ -52,8 +58,9 @@ after
     (code))
   (content))
 
+
 ==================
-empty code tag
+Empty code tag
 ==================
 <%  %>
 ---
@@ -62,8 +69,9 @@ empty code tag
   (directive
     (code)))
 
+
 ==================
-expression with lambda using pipes
+Expression with lambda using pipes
 ==================
 <%= $list.map |$x| { $x * 2 } %>
 ---
@@ -72,5 +80,10 @@ expression with lambda using pipes
   (output_directive
     (code
       (variable)
+      (identifier)
+      (operator)
       (variable)
-      (variable))))
+      (operator)
+      (variable)
+      (operator)
+      (number))))

@@ -21,26 +21,44 @@
 ; identifiers like `String` get coloured even when the puppet injection
 ; sees an invalid fragment (no surrounding `class () {}`).
 (parameter
-  ; type: (parameter_type) @type
   name: (parameter_name) @variable.parameter)
 
-; Common Puppet built-in types — override the generic @type.
-; ((parameter_type) @type.builtin
-;   (#any-of? @type.builtin
-;     "Boolean" "Integer" "Float" "Numeric" "String" "Array" "Hash"
-;     "Regexp" "Variant" "Optional" "Data" "Undef" "Default" "Any"
-;     "Pattern" "Enum" "Tuple" "Struct" "NotUndef" "Sensitive"
-;     "Type" "Callable" "Iterator" "Iterable" "Collection" "Catalogentry"
-;     "Resource" "Class" "Scalar" "Init" "Timestamp" "Timespan"
-;     "Binary" "URI"))
-;
-; ; `=` between name and default value
-(parameter
-  "=" @operator)
+; Structured parameter type parts.
+(type_name) @type
+(class_name) @type
+(subclass_name) @type
+(subtype_name) @type
+(hash_type) @type.builtin
+(array_type) @type.builtin
+(parameter_type_delimiter) @punctuation.delimiter
 
-; Comma between parameters
-(parameter_list
-  "," @punctuation.delimiter)
+((type_name) @type.builtin
+  (#any-of? @type.builtin
+    "Boolean" "Integer" "Float" "Numeric" "String" "Array" "Hash"
+    "Regexp" "Variant" "Optional" "Data" "Undef" "Default" "Any"
+    "Pattern" "Enum" "Tuple" "Struct" "NotUndef" "Sensitive"
+    "Type" "Callable" "Iterator" "Iterable" "Collection" "Catalogentry"
+    "Resource" "Class" "Scalar" "Init" "Timestamp" "Timespan"
+    "Binary" "URI"))
+
+[
+  "["
+  "]"
+  "{"
+  "}"
+] @punctuation.bracket
+
+[
+  ","
+] @punctuation.delimiter
+
+[
+  "=>"
+  "="
+] @operator
+
+(type_hash_entry
+  key: (identifier) @property)
 
 ; Comment body
 (comment_directive
@@ -53,6 +71,30 @@
 (variable) @variable.parameter
 (class_variable) @variable.parameter.builtin
 (function_call) @function.call
+
+; Hybrid Puppet fallback highlighting inside directive code. The Puppet
+; injection still handles complete/complex fragments; these host captures keep
+; simple split control-flow and ERROR regions readable.
+(comment) @comment
+(string) @string
+(number) @number
+(operator) @operator
+
+((identifier) @keyword.control
+  (#any-of? @keyword.control
+    "if" "elsif" "else" "unless" "case" "in"))
+
+((identifier) @keyword.operator
+  (#any-of? @keyword.operator
+    "and" "or" "not"))
+
+((identifier) @boolean
+  (#any-of? @boolean
+    "true" "false"))
+
+((identifier) @constant.builtin
+  (#any-of? @constant.builtin
+    "undef" "default"))
 
 ; Plain text outside tags — keep default colour so embedded <% %> tags
 ; visually stand out against unstyled template text.
