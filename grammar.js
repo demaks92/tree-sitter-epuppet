@@ -54,7 +54,12 @@ module.exports = grammar({
 
     // External tokens implemented in `src/scanner.c`. Order MUST match the
     // `TokenType` enum in the scanner.
-    externals: ($) => [$._code_text, $._close_directive, $._trim_close_directive, $._parameter_pipe],
+    externals: ($) => [
+        $._code_text,
+        $._close_directive,
+        $._trim_close_directive,
+        $._parameter_pipe
+    ],
 
     // Token used for keyword/identifier disambiguation.
     word: ($) => $.identifier,
@@ -66,15 +71,28 @@ module.exports = grammar({
     // both ambiguities by declaring the conflict; the parser then prefers the
     // longest match, so `= default` is attached to `parameter` whenever
     // present.
-    conflicts: ($) => [[$.parameter], [$.type_hash_entry]],
+    conflicts: ($) => [
+        [$.parameter],
+        [$.type_hash_entry]
+    ],
+
+    supertypes: $ => [$.expression,],
 
     rules: {
         // ------------------------------------------------------------------
         // Top level
         // ------------------------------------------------------------------
-        template: ($) => seq(optional($.parameter_directive), repeat($._template_item)),
+        template: ($) => seq(
+            optional($.parameter_directive),
+            repeat($._template_item)
+        ),
 
-        _template_item: ($) => choice($.directive, $.output_directive, $.comment_directive, $.content),
+        _template_item: ($) => choice(
+            $.directive,
+            $.output_directive,
+            $.comment_directive,
+            $.content
+        ),
 
         // ------------------------------------------------------------------
         // Parameter directive — STRUCTURED
@@ -86,21 +104,50 @@ module.exports = grammar({
         // `%>` / `-%>`). Whitespace between `<%`/`<%-` and `|` (and between
         // `|` and `%>`/`-%>`) is optional, matching the canonical EPP form
         // shown in the official docs as `<%- | ... | -%>`.
-        parameter_directive: ($) => seq(choice('<%', '<%-'), optional($._ws), $._parameter_pipe, optional($.parameter_list), $._parameter_pipe, optional($._ws), choice('%>', '-%>')),
+        parameter_directive: ($) => seq(
+            choice('<%', '<%-'),
+            optional($._ws),
+            $._parameter_pipe,
+            optional($.parameter_list),
+            $._parameter_pipe,
+            optional($._ws),
+            choice('%>', '-%>')
+        ),
 
         // List of parameters separated by mandatory commas (per spec).
         // A trailing comma is permitted (liberal interpretation; the spec is
         // silent on this, several modern parsers allow it).
-        parameter_list: ($) => seq(optional($._ws), $.parameter, repeat(seq(optional($._ws), ',', optional($._ws), $.parameter)), optional(seq(optional($._ws), ',')), optional($._ws)),
+        parameter_list: ($) => seq(
+            optional($._ws),
+            $.parameter,
+            repeat(seq(
+                optional($._ws),
+                ',',
+                optional($._ws),
+                $.parameter
+            )),
+            optional(seq(
+                optional($._ws),
+                ','
+            )),
+            optional($._ws)
+        ),
 
         // A single parameter: optional type, name, optional default.
         // Per EPP spec the type annotation is OPTIONAL (defaults to `Any`).
-        parameter: ($) =>
-            seq(
-                optional(seq(field('type', $.parameter_type), $._ws)),
-                field('name', alias($.variable, $.parameter_name)),
-                optional(seq(optional($._ws), '=', optional($._ws), field('default', alias($._default_code, $.parameter_default)))),
-            ),
+        parameter: ($) => seq(
+            optional(seq(
+                field('type', $.parameter_type),
+                $._ws
+            )),
+            field('name', alias($.variable, $.parameter_name)),
+            optional(seq(
+                optional($._ws),
+                '=',
+                optional($._ws),
+                field('default', alias($._default_code, $.parameter_default))
+            )),
+        ),
 
         // Puppet type reference:
         //   String
@@ -109,49 +156,153 @@ module.exports = grammar({
         //   Array[Hash[String, Integer]]
         //   Hash[String, Optional[Test::IP::v4]]
         //   Struct[{address => Stdlib::IP::Address::V4, ports => Array[Integer]}]
-        parameter_type: ($) =>
-            choice(
-                prec(
-                    3,
-                    seq(
-                        field(
-                            'type',
-                            alias(token(prec(2, choice('Hash', 'Struct', 'ArrayHash', 'BinaryArgsHash', 'NamedArgs', 'SemVerHash', 'SemVerRangeHash', 'StringHash', 'TypeMap'))), $.hash_type),
-                        ),
-                        field('arguments', $.hash_type_arguments),
-                    ),
-                ),
-                prec(3, seq(field('type', alias(token(prec(2, choice('Array', 'Tuple', 'IntegerTree'))), $.array_type)), field('arguments', $.array_type_arguments))),
-                seq($._qualified_parameter_type_name, optional(field('arguments', $.type_arguments))),
-                seq(field('type', alias($._parameter_type_identifier, $.type_name)), optional(field('arguments', $.type_arguments))),
-            ),
-
-        _qualified_parameter_type_name: ($) =>
+        parameter_type: ($) => choice(
+            prec(3, seq(
+                field('type', alias(token(prec(2, choice(
+                    'Hash',
+                    'Struct',
+                    'ArrayHash',
+                    'BinaryArgsHash',
+                    'NamedArgs',
+                    'SemVerHash',
+                    'SemVerRangeHash',
+                    'StringHash',
+                    'TypeMap')
+                )), $.hash_type),),
+                field('arguments', $.hash_type_arguments),
+            ),),
+            prec(3, seq(
+                field('type', alias(token(prec(2, choice(
+                    'Array',
+                    'Tuple',
+                    'IntegerTree'
+                ))), $.array_type)),
+                field('arguments', $.array_type_arguments)
+            )),
             seq(
-                field('class', alias($._parameter_type_identifier, $.class_name)),
-                field('delimiter', alias($._parameter_type_namespace_delimiter, $.parameter_type_delimiter)),
-                repeat(seq(field('subclass', alias($._parameter_type_identifier, $.subclass_name)), field('delimiter', alias($._parameter_type_namespace_delimiter, $.parameter_type_delimiter)))),
-                field('subtype', alias($._parameter_type_identifier, $.subtype_name)),
+                $._qualified_parameter_type_name,
+                optional(field('arguments', $.type_arguments))
             ),
+            seq(
+                field('type', alias($._parameter_type_identifier, $.type_name)),
+                optional(field('arguments', $.type_arguments))
+            ),
+        ),
 
-        type_arguments: ($) =>
-            seq('[', optional($._ws), optional(seq(field('value', $.type_argument), repeat(seq(optional($._ws), ',', optional($._ws), field('value', $.type_argument))), optional($._ws))), ']'),
+        _qualified_parameter_type_name: ($) => seq(
+            field('class', alias($._parameter_type_identifier, $.class_name)),
+            field('delimiter', alias($._parameter_type_namespace_delimiter, $.parameter_type_delimiter)),
+            repeat(seq(
+                field('subclass', alias($._parameter_type_identifier, $.subclass_name)),
+                field('delimiter', alias($._parameter_type_namespace_delimiter, $.parameter_type_delimiter)))
+            ),
+            field('subtype', alias($._parameter_type_identifier, $.subtype_name)),
+        ),
 
-        hash_type_arguments: ($) =>
-            seq('[', optional($._ws), optional(seq(field('key', $.type_argument), optional(seq(optional($._ws), ',', optional($._ws), field('value', $.type_argument))), optional($._ws))), ']'),
+        type_arguments: ($) => seq(
+            '[',
+            optional($._ws),
+            optional(seq(
+                field('value', $.type_argument),
+                repeat(seq(
+                    optional($._ws),
+                    ',',
+                    optional($._ws),
+                    field('value', $.type_argument)
+                )),
+                optional($._ws)
+            )),
+            ']'
+        ),
 
-        array_type_arguments: ($) =>
-            seq('[', optional($._ws), optional(seq(field('value', $.type_argument), repeat(seq(optional($._ws), ',', optional($._ws), field('value', $.type_argument))), optional($._ws))), ']'),
+        hash_type_arguments: ($) => seq(
+            '[',
+            optional($._ws),
+            optional(seq(
+                field('key', $.type_argument),
+                optional(seq(
+                    optional($._ws),
+                    ',',
+                    optional($._ws),
+                    field('value', $.type_argument)
+                )),
+                optional($._ws)
+            )),
+            ']'
+        ),
 
-        type_argument: ($) => choice($.parameter_type, $.type_hash, $.type_array, $.string, $.number),
+        array_type_arguments: ($) => seq(
+            '[',
+            optional($._ws),
+            optional(seq(
+                field('value', $.type_argument),
+                repeat(seq(
+                    optional($._ws),
+                    ',',
+                    optional($._ws),
+                    field('value', $.type_argument)
+                )),
+                optional($._ws)
+            )),
+            ']'
+        ),
 
-        type_hash: ($) => seq('{', optional($._ws), optional(seq($.type_hash_entry, repeat(seq(optional($._ws), ',', optional($._ws), $.type_hash_entry)), optional($._ws))), '}'),
+        type_argument: ($) => choice(
+            $.parameter_type,
+            $.type_hash,
+            $.type_array,
+            $.string,
+            $.number
+        ),
 
-        type_hash_entry: ($) =>
-            seq(field('key', choice($.string, $.identifier, $.parameter_type)), optional(seq(optional($._ws), choice('=>', '='), optional($._ws), field('value', $.type_argument)))),
+        type_hash: ($) => seq(
+            '{',
+            optional($._ws),
+            optional(seq(
+                $.type_hash_entry,
+                repeat(seq(
+                    optional($._ws),
+                    ',',
+                    optional($._ws),
+                    $.type_hash_entry
+                )),
+                optional($._ws)
+            )),
+            '}'
+        ),
 
-        type_array: ($) =>
-            seq('[', optional($._ws), optional(seq(field('value', $.type_argument), repeat(seq(optional($._ws), ',', optional($._ws), field('value', $.type_argument))), optional($._ws))), ']'),
+        type_hash_entry: ($) => seq(
+            field('key', choice(
+                $.string,
+                $.identifier,
+                $.parameter_type
+            )),
+            optional(seq(
+                optional($._ws),
+                choice(
+                    '=>',
+                    '='
+                ),
+                optional($._ws),
+                field('value', $.type_argument)
+            ))
+        ),
+
+        type_array: ($) => seq(
+            '[',
+            optional($._ws),
+            optional(seq(
+                field('value', $.type_argument),
+                repeat(seq(
+                    optional($._ws),
+                    ',',
+                    optional($._ws),
+                    field('value', $.type_argument)
+                )),
+                optional($._ws)
+            )),
+            ']'
+        ),
 
         _parameter_type_namespace_delimiter: (_) => token('::'),
 
@@ -166,21 +317,58 @@ module.exports = grammar({
         // aliased back to their literal forms so query consumers can match
         // them as anonymous `"%>"` / `"-%>"` tokens (matching the convention
         // used by tree-sitter-embedded-template).
-        directive: ($) => seq(choice('<%', '<%-'), optional($.code), choice(alias($._close_directive, '%>'), alias($._trim_close_directive, '-%>'))),
+        directive: ($) => seq(
+            choice(
+                '<%',
+                '<%-'
+            ),
+            optional($.code), choice(
+                alias($._close_directive, '%>'),
+                alias($._trim_close_directive, '-%>')
+            )
+        ),
 
         // Printing: `<%= ... %>` / `<%-= ... -%>` / mixed trim.
-        output_directive: ($) => seq(choice('<%=', '<%-='), optional($.code), choice(alias($._close_directive, '%>'), alias($._trim_close_directive, '-%>'))),
+        output_directive: ($) => seq(
+            choice(
+                '<%=',
+                '<%-='
+            ),
+            optional($.code),
+            choice(
+                alias($._close_directive, '%>'),
+                alias($._trim_close_directive, '-%>')
+            )
+        ),
 
         // Tag body: a single named node wrapping all items. `_code_text` is
         // produced by the external scanner (string/comment-aware). `_ws` is
         // kept so that pure-whitespace runs are matched (the scanner refuses
         // to start `_code_text` on whitespace, leaving `_ws` to win).
-        code: ($) => repeat1(choice($.function_call, $.class_variable, $.variable, $.comment, $.string, $.number, $.identifier, $.operator, $._ws, $._code_text)),
+        code: ($) => repeat1(choice(
+            $.function_call,
+            $.class_variable,
+            $.variable,
+            $.comment,
+            $.string,
+            $.number,
+            $.identifier,
+            $.operator,
+            $._ws,
+            $._code_text
+        )),
 
         // ------------------------------------------------------------------
         // Comment directive: `<%# ... %>` or `<%-# ... -%>`
         // ------------------------------------------------------------------
-        comment_directive: ($) => seq(choice('<%#', '<%-#'), optional(alias($._comment_text, $.comment)), choice('%>', '-%>')),
+        comment_directive: ($) => seq(
+            choice(
+                '<%#',
+                '<%-#'
+            ),
+            optional(alias($._comment_text, $.comment)),
+            choice('%>', '-%>')
+        ),
 
         // Comment body — anything up to `%>`. Allow `%` not followed by `>`.
         _comment_text: (_) => token(/([^%]|%[^>])+/),
@@ -195,7 +383,11 @@ module.exports = grammar({
         // `prec.right` resolves the ambiguity between extending the current
         // `content` repetition vs starting a new one when adjacent text chunks
         // can be combined.
-        content: (_) => prec.right(repeat1(choice(/[^<]+/, '<%%', '<'))),
+        content: (_) => prec.right(repeat1(choice(
+            /[^<]+/,
+            '<%%',
+            '<'
+        ))),
         // ------------------------------------------------------------------
         // Variables and function calls (lexical, used inside `code`)
         // ------------------------------------------------------------------
@@ -222,14 +414,45 @@ module.exports = grammar({
 
         // String literals are surfaced as host nodes so `%>` inside quotes does
         // not split the directive while still giving fallback highlighting.
-        string: (_) => token(prec(1, choice(/'(\\.|[^'\\])*'/, /"(\\.|[^"\\])*"/))),
+        string: (_) => token(prec(1, choice(
+            /'(\\.|[^'\\])*'/,
+            /"(\\.|[^"\\])*"/
+        ))),
 
         number: (_) => token(prec(1, /0[xX][0-9A-Fa-f]+|\d+(\.\d+)?/)),
 
         identifier: (_) => token(prec(0, /[A-Za-z_][A-Za-z0-9_]*/)),
 
-        operator: (_) =>
-            token(prec(1, choice('==', '!=', '<=', '>=', '=~', '!~', '=>', '->', '~>', '<-', '<~', '+=', '-=', '<<', '>>', '::', '+', '-', '*', '/', '%', '<', '>', '=', '!', '~', '|', '&'))),
+        operator: (_) => token(prec(1,choice(
+            '==',
+            '!=',
+            '<=',
+            '>=',
+            '=~',
+            '!~',
+            '=>',
+            '->',
+            '~>',
+            '<-',
+            '<~',
+            '+=',
+            '-=',
+            '<<',
+            '>>',
+            '::',
+            '+',
+            '-',
+            '*',
+            '/',
+            '%',
+            '<',
+            '>',
+            '=',
+            '!',
+            '~',
+            '|',
+            '&'
+        ))),
 
         // ------------------------------------------------------------------
         // Parameter default expression (balanced, opaque)
@@ -238,7 +461,12 @@ module.exports = grammar({
         // (), [], {} and skips over quoted strings so commas inside them
         // don't terminate the expression. `-` and `|` (lambda pipes) inside a
         // balanced group are accepted via `_balanced_text`.
-        _default_code: ($) => repeat1(choice($._default_atom, $._balanced_parens, $._balanced_brackets, $._balanced_braces)),
+        _default_code: ($) => repeat1(choice(
+            $._default_atom,
+            $._balanced_parens,
+            $._balanced_brackets,
+            $._balanced_braces
+        )),
 
         // At the top level of a default we cannot consume `,` (next param) or
         // `|` (closing pipe). `-` is permitted because unary and binary
@@ -247,11 +475,38 @@ module.exports = grammar({
         // code-text state, not by the parameter default lexer.
         _default_atom: (_) => token(/([^,|()\[\]{}"']|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')+/),
 
-        _balanced_parens: ($) => seq('(', repeat(choice($._balanced_text, $._balanced_parens, $._balanced_brackets, $._balanced_braces)), ')'),
+        _balanced_parens: ($) => seq(
+            '(',
+            repeat(choice(
+                $._balanced_text,
+                $._balanced_parens,
+                $._balanced_brackets,
+                $._balanced_braces
+            )),
+            ')'
+        ),
 
-        _balanced_brackets: ($) => seq('[', repeat(choice($._balanced_text, $._balanced_parens, $._balanced_brackets, $._balanced_braces)), ']'),
+        _balanced_brackets: ($) => seq(
+            '[',
+            repeat(choice(
+                $._balanced_text,
+                $._balanced_parens,
+                $._balanced_brackets,
+                $._balanced_braces
+            )),
+            ']'
+        ),
 
-        _balanced_braces: ($) => seq('{', repeat(choice($._balanced_text, $._balanced_parens, $._balanced_brackets, $._balanced_braces)), '}'),
+        _balanced_braces: ($) => seq(
+            '{',
+            repeat(choice(
+                $._balanced_text,
+                $._balanced_parens,
+                $._balanced_brackets,
+                $._balanced_braces
+            )),
+            '}'
+        ),
 
         _balanced_text: (_) => token(/([^()\[\]{}"']|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')+/),
 
