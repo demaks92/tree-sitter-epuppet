@@ -1,16 +1,16 @@
 ==================
-plain text only
+Plain text only
 ==================
 hello world
 no tags here
 ---
 
-(source_file
+(template
   (content))
 
 ==================
-empty file
+Empty file
 ==================
 ---
 
-(source_file)
+(template)

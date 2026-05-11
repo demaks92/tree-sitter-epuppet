@@ -1,0 +1,78 @@
+==================
+Split if highlights host tokens
+==================
+<% if $enabled == true { %>
+enabled
+<% } else { %>
+disabled
+<% } %>
+---
+
+(template
+  (directive
+    (code
+      (identifier)
+      (variable)
+      (operator)
+      (identifier)))
+  (content)
+  (directive
+    (code
+      (identifier)))
+  (content)
+  (directive
+    (code)))
+
+
+==================
+Comments strings and numbers in code
+==================
+<% # comment with %> inside
+$message = "port" + '443'
+$port = 443 %>
+---
+
+(template
+  (directive
+    (code
+      (comment)
+      (variable)
+      (operator)
+      (string)
+      (operator)
+      (string)
+      (variable)
+      (operator)
+      (number))))
+
+
+==================
+Operators and lambda pipes
+==================
+<%= $list.map |$item| { $item * 2 } %>
+---
+
+(template
+  (output_directive
+    (code
+      (variable)
+      (identifier)
+      (operator)
+      (variable)
+      (operator)
+      (variable)
+      (operator)
+      (number))))
+
+
+==================
+Qualified variable with fallback text
+==================
+<%= $facts::networking['fqdn'] %>
+---
+
+(template
+  (output_directive
+    (code
+      (class_variable)
+      (string))))

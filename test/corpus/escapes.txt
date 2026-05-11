@@ -1,27 +1,31 @@
 ==================
-escaped open delimiter in content
+Escaped open delimiter in content
 ==================
 literal <%% stays as text
 ---
 
-(source_file
+(template
   (content))
 
+
 ==================
-escaped close delimiter inside code
+Escaped close delimiter inside code
 ==================
 <% before %%> after %>
 ---
 
-(source_file
-  (code_tag
-    code: (code)))
+(template
+  (directive
+    (code
+      (identifier)
+      (identifier))))
+
 
 ==================
-both escapes mixed in content
+Both escapes mixed in content
 ==================
 prefix <%% middle %%> suffix
 ---
 
-(source_file
+(template
   (content))

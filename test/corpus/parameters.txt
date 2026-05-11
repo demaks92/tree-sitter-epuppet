@@ -1,36 +1,39 @@
 ==================
-parameter tag with single param
+Parameter tag with single param
 ==================
 <%- | $x | -%>
 hello <%= $x %>
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))))
   (content)
-  (expression_tag
-    code: (code)))
+  (output_directive
+    (code
+      (variable))))
 
 ==================
-parameter tag with default value
+Parameter tag with default value
 ==================
 <%- | $x, $y = 'default' | -%>
 body
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable))
-    (parameter
-      name: (variable)
-      default: (code)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))
+      (parameter
+        name: (parameter_name)
+        default: (parameter_default))))
   (content))
 
 ==================
-parameter tag with type annotations
+Parameter tag with type annotations
 ==================
 <%- |
   String       $name,
@@ -40,34 +43,43 @@ parameter tag with type annotations
 done
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        type: (parameter_type
+          type: (type_name))
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type
+          type: (type_name))
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type
+          type: (array_type)
+          arguments: (array_type_arguments
+            value: (type_argument
+              (parameter_type
+                type: (type_name)))))
+        name: (parameter_name))))
   (content))
 
 ==================
-parameter tag without trim
+Parameter tag without trim
 ==================
 <% | $x | %>
 plain
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        name: (parameter_name))))
   (content))
 
 ==================
-parameter tag with namespaced and bracketed types
+Parameter tag with namespaced and bracketed types
 ==================
 <%- |
   Stdlib::Host             $hostname,
@@ -77,15 +89,95 @@ parameter tag with namespaced and bracketed types
 body
 ---
 
-(source_file
-  (parameter_tag
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable))
-    (parameter
-      type: (type)
-      name: (variable)))
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        type: (parameter_type
+          class: (class_name)
+          delimiter: (parameter_type_delimiter)
+          subtype: (subtype_name))
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type
+          type: (type_name)
+          arguments: (type_arguments
+            value: (type_argument
+              (parameter_type
+                type: (type_name)))))
+        name: (parameter_name))
+      (parameter
+        type: (parameter_type
+          type: (type_name))
+        name: (parameter_name))))
+  (content))
+
+==================
+Structured nested parameter types
+==================
+<%- |
+  Test::IP::v4 $addr,
+  Hash[String, Optional[Test::IP::v4]] $map,
+  Struct[{address => Stdlib::IP::Address::V4, ports => Array[Integer]}] $cfg,
+| -%>
+body
+---
+
+(template
+  (parameter_directive
+    (parameter_list
+      (parameter
+        (parameter_type
+          (class_name)
+          (parameter_type_delimiter)
+          (subclass_name)
+          (parameter_type_delimiter)
+          (subtype_name))
+        (parameter_name))
+      (parameter
+        (parameter_type
+          (hash_type)
+          (hash_type_arguments
+            (type_argument
+              (parameter_type
+                (type_name)))
+            (type_argument
+              (parameter_type
+                (type_name)
+                (type_arguments
+                  (type_argument
+                    (parameter_type
+                      (class_name)
+                      (parameter_type_delimiter)
+                      (subclass_name)
+                      (parameter_type_delimiter)
+                      (subtype_name))))))))
+        (parameter_name))
+      (parameter
+        (parameter_type
+          (hash_type)
+          (hash_type_arguments
+            (type_argument
+              (type_hash
+                (type_hash_entry
+                  (identifier)
+                  (type_argument
+                    (parameter_type
+                      (class_name)
+                      (parameter_type_delimiter)
+                      (subclass_name)
+                      (parameter_type_delimiter)
+                      (subclass_name)
+                      (parameter_type_delimiter)
+                      (subtype_name))))
+                (type_hash_entry
+                  (identifier)
+                  (type_argument
+                    (parameter_type
+                      (array_type)
+                      (array_type_arguments
+                        (type_argument
+                          (parameter_type
+                            (type_name)))))))))))
+        (parameter_name))))
   (content))

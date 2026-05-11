@@ -1,15 +1,16 @@
 ==================
-single line comment
+Single line comment
 ==================
 <%# this is a comment %>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))
+
 
 ==================
-multiline comment
+Multiline comment
 ==================
 <%#
   this comment
@@ -18,27 +19,29 @@ multiline comment
 body
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment))
+(template
+  (comment_directive
+    (comment))
   (content))
 
+
 ==================
-comment with trim
+Comment with trim
 ==================
 <%#- silent -%>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))
+
 
 ==================
-empty comment
+Empty comment
 ==================
 <%# %>
 ---
 
-(source_file
-  (comment_tag
-    comment: (comment)))
+(template
+  (comment_directive
+    (comment)))

@@ -1,32 +1,37 @@
 ==================
-expression tag inline
+Expression tag inline
 ==================
 prefix <%= $value %> suffix
 ---
 
-(source_file
+(template
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content))
 
+
 ==================
-code block tag
+Code block tag
 ==================
 <% if $cond { %>
 yes
 <% } %>
 ---
 
-(source_file
-  (code_tag
-    code: (code))
+(template
+  (directive
+    (code
+      (identifier)
+      (variable)))
   (content)
-  (code_tag
-    code: (code)))
+  (directive
+    (code)))
+
 
 ==================
-code block with trim markers
+Code block with trim markers
 ==================
 before
 <%- $arr.each |$x| { -%>
@@ -35,33 +40,50 @@ before
 after
 ---
 
-(source_file
+(template
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code
+      (variable)
+      (identifier)
+      (operator)
+      (variable)
+      (operator)))
   (content)
-  (expression_tag
-    code: (code))
+  (output_directive
+    (code
+      (variable)))
   (content)
-  (code_tag
-    code: (code))
+  (directive
+    (code))
   (content))
 
+
 ==================
-empty code tag
+Empty code tag
 ==================
 <%  %>
 ---
 
-(source_file
-  (code_tag))
+(template
+  (directive
+    (code)))
+
 
 ==================
-expression with lambda using pipes
+Expression with lambda using pipes
 ==================
 <%= $list.map |$x| { $x * 2 } %>
 ---
 
-(source_file
-  (expression_tag
-    code: (code)))
+(template
+  (output_directive
+    (code
+      (variable)
+      (identifier)
+      (operator)
+      (variable)
+      (operator)
+      (variable)
+      (operator)
+      (number))))
